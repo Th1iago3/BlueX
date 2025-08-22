@@ -1,12 +1,18 @@
 # BlueX
 
 <p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=8a2be2&height=200&section=header&text=BlueX%20Executor&fontSize=50&fontColor=ffffff&animation=fadeIn&fontAlignY=35" alt="BlueX Banner" />
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/BlueX-Aimbot-blueviolet?style=for-the-badge" alt="BlueX Badge" />
   <img src="https://img.shields.io/badge/Lua-5.x-000?style=for-the-badge&logo=lua&logoColor=white" alt="Lua Badge" />
   <img src="https://img.shields.io/github/last-commit/Th1iago3/BlueX?style=for-the-badge" alt="Last Commit" />
+  <a href="https://instagram.com/0xffff00"><img src="https://img.shields.io/badge/Instagram-@0xffff00-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram Badge" /></a>
 </p>
 
-<p align="center"
+<p align="center">
+  <em>Um script avançado de aimbot e antirecoil para Roblox, com interface gráfica moderna e múltiplas opções de configuração.</em>
 </p>
 
 ---
@@ -53,7 +59,7 @@ Cole no seu executor/script runner e pronto.
   * Aberta com **RightShift**.
   * Toggle de Aimbot com **Q**.
   * Sliders para ajuste de Predição e Smooth Speed.
-  * Interface clean e arrastável, com botões e indicadores de estado.
+  * Interface clean, arrastável e intuitiva.
 
 ---
 
@@ -104,6 +110,10 @@ Cole no seu executor/script runner e pronto.
 Este projeto é fornecido **“como está”**, sem garantias. Use por sua conta e risco!
 
 ---
+
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=8a2be2&height=120&section=footer" alt="BlueX Footer" />
+</p>
 
 <p align="center">
   Feito com ❤️ por <a href="https://github.com/Th1iago3">Th1iago3</a><br/>
