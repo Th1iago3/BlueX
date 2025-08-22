@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  Um script avançado de **aimbot e antirecoil** para Roblox, com interface gráfica customizada e múltiplas opções de configuração.
+  Um script avançado de [aimbot e antirecoil] para Roblox, com interface gráfica customizada e múltiplas opções de configuração.
 </p>
 
 ---
