@@ -59,10 +59,14 @@ Cole no seu executor/script runner e pronto.
 
 ---
 
-## 🖼️ Print in-game
+## 🎮 In-game
 
 <p align="center">
   <img src="https://cdn.discordapp.com/attachments/1406725842498879501/1408334653986832455/IMG_3153.png?ex=68a95d5b&is=68a80bdb&hm=e3842d1bfeeaa4c57b418fc38b7383fb60bb97971259fd7d8aaa6a168d61649c&" alt="BlueX GUI In-Game" width="600"/>
+</p>
+
+<p align="center">
+  <video src="https://cdn.discordapp.com/attachments/1407477297677864980/1408274456916398130/3126429a-4920-4f4f-b4ca-298241d08113.mov?ex=68a9254b&is=68a7d3cb&hm=e4dd2c805b0597d2d5b3174ec48328b847fbe21b916c187efe319b1a449e9477&" controls width="600"></video>
 </p>
 
 ---
