@@ -11,10 +11,6 @@
   <a href="https://instagram.com/0xffff00"><img src="https://img.shields.io/badge/Instagram-@0xffff00-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram Badge" /></a>
 </p>
 
-<p align="center">
-
-</p>
-
 ---
 
 ## 🚀 Instalação rápida
@@ -23,7 +19,7 @@ Copie o código abaixo (há botão de **copiar** no GitHub automaticamente):
 
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Th1iago3/BlueX/refs/heads/main/BlueX.lua"))()
-```
+````
 
 Cole no seu executor/script runner e pronto.
 
@@ -60,6 +56,14 @@ Cole no seu executor/script runner e pronto.
   * Toggle de Aimbot com **Q**.
   * Sliders para ajuste de Predição e Smooth Speed.
   * Interface clean, arrastável e intuitiva.
+
+---
+
+## 🖼️ Print in-game
+
+<p align="center">
+  <img src="https://cdn.discordapp.com/attachments/1406725842498879501/1408334653986832455/IMG_3153.png?ex=68a95d5b&is=68a80bdb&hm=e3842d1bfeeaa4c57b418fc38b7383fb60bb97971259fd7d8aaa6a168d61649c&" alt="BlueX GUI In-Game" width="600"/>
+</p>
 
 ---
 
