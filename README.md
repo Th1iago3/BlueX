@@ -102,7 +102,7 @@ Cole no seu executor/script runner e pronto.
 
 ## 🔐 Aviso
 
-Este projeto é fornecido **“como está”**, sem garantias. Use por sua conta e risco e respeite os termos das plataformas/jogos.
+Este projeto é fornecido **“como está”**, sem garantias. Use por sua conta e risco!
 
 ---
 
