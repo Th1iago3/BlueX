@@ -6,8 +6,7 @@
   <img src="https://img.shields.io/github/last-commit/Th1iago3/BlueX?style=for-the-badge" alt="Last Commit" />
 </p>
 
-<p align="center">
-  
+<p align="center"
 </p>
 
 ---
@@ -107,5 +106,6 @@ Este projeto é fornecido **“como está”**, sem garantias. Use por sua conta
 ---
 
 <p align="center">
-  Feito com ❤️ por <a href="https://github.com/Th1iago3">Th1iago3</a>
+  Feito com ❤️ por <a href="https://github.com/Th1iago3">Th1iago3</a><br/>
+  📷 Instagram: <a href="https://instagram.com/0xffff00">@0xffff00</a>
 </p>
