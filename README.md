@@ -15,7 +15,7 @@
 
 ## 🚀 Instalação rápida
 
-Copie o código abaixo (há botão de **copiar** no GitHub automaticamente):
+Copie o código abaixo:
 
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Th1iago3/BlueX/refs/heads/main/BlueX.lua"))()
@@ -33,6 +33,7 @@ Cole no seu executor/script runner e pronto.
   * Suavização configurável (smooth aim) para movimentos naturais.
   * Opções de prioridade (distância, vida, ou híbrido).
   * FOV configurável (campo de visão para mirar).
+  * ESP Charms (veja seus inimigos através das paredes).
 
 * 👀 **Verificação de visibilidade**
 
@@ -92,6 +93,7 @@ Cole no seu executor/script runner e pronto.
 * **Team Check** → Ignora aliados automaticamente.
 * **Manual Team Check** → Selecione manualmente quem será ignorado.
 * **Aim Part** → Define a parte do corpo a ser mirado (padrão: Head).
+* **ESP Charms** → Ver os Inimigos Atrás das paredes (cor: branca).
 
 ---
 
