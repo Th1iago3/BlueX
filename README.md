@@ -1,7 +1,10 @@
+
+---
+
 # BlueX
 
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=8a2be2&height=200&section=header&text=Seja%20Bem-vindo(a).&fontSize=50&fontColor=ffffff&animation=fadeIn&fontAlignY=35" alt="BlueX Banner" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=8a2be2&height=200&section=header&text=Welcome%20to%20BlueX&fontSize=50&fontColor=ffffff&animation=fadeIn&fontAlignY=35" alt="BlueX Banner" />
 </p>
 
 <p align="center">
@@ -13,113 +16,113 @@
 
 ---
 
-## 🚀 Instalação rápida
+## ⚡ Quick Installation
 
-Copie o código abaixo:
+Copy & paste this line inside your Roblox executor:
 
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Th1iago3/BlueX/refs/heads/main/BlueX.lua"))()
-````
+```
 
-Cole no seu executor/script runner e pronto.
-
----
-
-## ✨ Recursos principais
-
-* 🎯 **Aimbot avançado**
-
-  * Predição de movimento baseada em velocidade, aceleração e ping.
-  * Suavização configurável (smooth aim) para movimentos naturais.
-  * Opções de prioridade (distância, vida, ou híbrido).
-  * FOV configurável (campo de visão para mirar).
-  * ESP Charms (veja seus inimigos através das paredes).
-
-* 👀 **Verificação de visibilidade**
-
-  * Raycast para garantir que só mira em alvos visíveis.
-  * Ignora obstáculos entre você e o inimigo.
-
-* 🤝 **Controle de times**
-
-  * Detecção automática de aliados.
-  * **Team Check** (liga/desliga).
-  * Seleção manual de “amigos” via GUI.
-
-* 🔫 **No Recoil & No Spread**
-
-  * Remove recuo, spread e kick das armas.
-  * Aumenta taxa de disparo (fire rate otimizado).
-
-* 🖥️ **Interface gráfica (GUI)**
-
-  * Aberta com **RightShift**.
-  * Toggle de Aimbot com **Q**.
-  * Sliders para ajuste de Predição e Smooth Speed.
-  * Interface clean, arrastável e intuitiva.
+Done! BlueX will load automatically.
 
 ---
 
-## 🎮 In-game
+## ✨ Main Features
+
+### 🎯 **Advanced Aimbot**
+
+* Movement prediction (speed, acceleration, ping-based).
+* Configurable smoothing for natural aim.
+* Priority options (distance, health, hybrid).
+* Adjustable FOV (Field of View).
+* ESP Charms (see enemies through walls).
+
+### 👀 **Visibility Check**
+
+* Raycast ensures aim only locks on visible enemies.
+* Ignores objects between you and target.
+
+### 🤝 **Team Control**
+
+* Automatic teammate detection.
+* **Team Check** (toggle on/off).
+* Manual “Friend Selection” via GUI.
+
+### 🔫 **Weapon Enhancements**
+
+* Removes recoil, spread & kick.
+* Optimized fire rate for faster shots.
+
+### 🖥️ **Clean Graphical Interface (GUI)**
+
+* Open with **RightShift**.
+* Toggle Aimbot with **Q**.
+* Sliders for Prediction & Smooth Aim.
+* Drag-and-drop intuitive design.
+
+---
+
+## 🎮 In-Game Preview
 
 <p align="center">
-  <img src="https://cdn.discordapp.com/attachments/1406725842498879501/1408334653986832455/IMG_3153.png?ex=68a95d5b&is=68a80bdb&hm=e3842d1bfeeaa4c57b418fc38b7383fb60bb97971259fd7d8aaa6a168d61649c&" alt="BlueX GUI In-Game" width="600"/>
+  <img src="https://cdn.discordapp.com/attachments/1406725842498879501/1408334653986832455/IMG_3153.png" alt="BlueX GUI In-Game" width="600"/>
 </p>
 
 <p align="center">
   <img src="bluex_demo.gif" alt="BlueX GUI In-Game Demo" width="600"/>
 </p>
 
+---
+
+## 🎮 How to Use
+
+1. Open your script executor in Roblox.
+2. Paste the **Quick Installation** command.
+3. Use hotkeys:
+
+   * `RightShift` → Open/close GUI.
+   * `Q` → Toggle Aimbot.
+   * `F6` → Toggle ESP Charms.
+4. Customize settings in the menu.
 
 ---
 
-## 🎮 Como usar
+## ⚙️ Available Settings
 
-1. Abra seu executor de scripts no Roblox.
-2. Cole o comando de instalação rápida.
-3. Use as teclas de atalho:
-
-   * `RightShift` → Abre/fecha o menu.
-   * `Q` → Liga/desliga o Aimbot.
-   * `F6` → Liga/desliga a ESP Charms.
-4. Configure o aimbot ao seu gosto na interface.
+* **Prediction** → Adjusts target movement prediction.
+* **Smooth Speed** → Controls aiming smoothness.
+* **Team Check** → Automatically ignores teammates.
+* **Manual Team Check** → Manually exclude selected players.
+* **Aim Part** → Choose target body part (default: Head).
+* **ESP Charms** → Highlights enemies through walls (default: white).
 
 ---
 
-## ⚙️ Configurações disponíveis
-
-* **Prediction** → Ajusta a predição de movimento.
-* **Smooth Speed** → Define a suavidade do movimento da mira.
-* **Team Check** → Ignora aliados automaticamente.
-* **Manual Team Check** → Selecione manualmente quem será ignorado.
-* **Aim Part** → Define a parte do corpo a ser mirado (padrão: Head).
-* **ESP Charms** → Ver os Inimigos Atrás das paredes (cor: branca).
-
----
-
-## 🧩 Solução de problemas
+## 🧩 Troubleshooting
 
 <details>
-<summary><strong>O script não abre a interface</strong></summary>
+<summary><strong>GUI not showing?</strong></summary>
 
-* Confirme se pressionou **RightShift**.
-* Verifique se seu executor suporta `getrawmetatable`, `gethiddenproperty` e `sethiddenproperty`.
+* Make sure you pressed **RightShift**.
+* Check if your executor supports `getrawmetatable`, `gethiddenproperty`, and `sethiddenproperty`.
 
 </details>
 
 <details>
-<summary><strong>Não está mirando corretamente</strong></summary>
+<summary><strong>Aimbot not aiming correctly?</strong></summary>
 
-* Aumente a **Prediction** se o alvo estiver se movendo rápido.
-* Reduza a **Smooth Speed** se a mira parecer lenta.
+* Increase **Prediction** for fast-moving enemies.
+* Lower **Smooth Speed** if the aim feels too slow.
 
 </details>
 
 ---
 
-## 🔐 Aviso
+## 🔐 Disclaimer
 
-Este projeto é fornecido **“como está”**, sem garantias. Use por sua conta e risco!
+This project is provided **“as is”**, without warranties.
+Use at your own risk ⚠️.
 
 ---
 
@@ -128,6 +131,8 @@ Este projeto é fornecido **“como está”**, sem garantias. Use por sua conta
 </p>
 
 <p align="center">
-  Feito com ❤️ por <a href="https://github.com/Th1iago3">Th1iago3</a><br/>
+  Made with ❤️ by <a href="https://github.com/Th1iago3">Th1iago3</a><br/>
   📷 Instagram: <a href="https://instagram.com/0xffff00">@0xffff00</a>
 </p>
+
+---
