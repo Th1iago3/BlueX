@@ -1,7 +1,7 @@
 # BlueX
 
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=8a2be2&height=200&section=header&text=BlueX%20Executor&fontSize=50&fontColor=ffffff&animation=fadeIn&fontAlignY=35" alt="BlueX Banner" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=8a2be2&height=200&section=header&text=Seja%20Bem-vindo(a).&fontSize=50&fontColor=ffffff&animation=fadeIn&fontAlignY=35" alt="BlueX Banner" />
 </p>
 
 <p align="center">
