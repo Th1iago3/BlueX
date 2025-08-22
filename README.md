@@ -80,6 +80,7 @@ Cole no seu executor/script runner e pronto.
 
    * `RightShift` → Abre/fecha o menu.
    * `Q` → Liga/desliga o Aimbot.
+   * `F6` → Liga/desliga a ESP Charms.
 4. Configure o aimbot ao seu gosto na interface.
 
 ---
