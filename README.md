@@ -1,68 +1,111 @@
 # BlueX
+
 <p align="center">
-  <img src="https://img.shields.io/badge/BlueX-Executor-blueviolet?style=for-the-badge" alt="BlueX Badge" />
+  <img src="https://img.shields.io/badge/BlueX-Aimbot-blueviolet?style=for-the-badge" alt="BlueX Badge" />
   <img src="https://img.shields.io/badge/Lua-5.x-000?style=for-the-badge&logo=lua&logoColor=white" alt="Lua Badge" />
   <img src="https://img.shields.io/github/last-commit/Th1iago3/BlueX?style=for-the-badge" alt="Last Commit" />
 </p>
 
 <p align="center">
-  Execute o <strong>BlueX</strong> com um único comando. Simples, rápido e direto do GitHub.
+  Um script avançado de **aimbot e antirecoil** para Roblox, com interface gráfica customizada e múltiplas opções de configuração.
 </p>
 
 ---
 
 ## 🚀 Instalação rápida
 
-> **Dica:** No GitHub, há um botão de **copiar** no canto direito do bloco de código abaixo. Clique nele para copiar o comando instantaneamente.
+Copie o código abaixo (há botão de **copiar** no GitHub automaticamente):
 
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Th1iago3/BlueX/refs/heads/main/BlueX.lua"))()
 ```
 
----
-
-## 💡 Como usar
-1. Abra seu executor/script runner de confiança.
-2. Copie o comando acima e cole no executor.
-3. Execute e aguarde o carregamento do BlueX.
+Cole no seu executor/script runner e pronto.
 
 ---
 
-## ✨ Recursos
-- Carregamento direto do GitHub (sempre a versão mais recente).
-- Comando único, sem configurações complexas.
-- Mantido por **@Th1iago3**.
+## ✨ Recursos principais
+
+* 🎯 **Aimbot avançado**
+
+  * Predição de movimento baseada em velocidade, aceleração e ping.
+  * Suavização configurável (smooth aim) para movimentos naturais.
+  * Opções de prioridade (distância, vida, ou híbrido).
+  * FOV configurável (campo de visão para mirar).
+
+* 👀 **Verificação de visibilidade**
+
+  * Raycast para garantir que só mira em alvos visíveis.
+  * Ignora obstáculos entre você e o inimigo.
+
+* 🤝 **Controle de times**
+
+  * Detecção automática de aliados.
+  * **Team Check** (liga/desliga).
+  * Seleção manual de “amigos” via GUI.
+
+* 🔫 **No Recoil & No Spread**
+
+  * Remove recuo, spread e kick das armas.
+  * Aumenta taxa de disparo (fire rate otimizado).
+
+* 🖥️ **Interface gráfica (GUI)**
+
+  * Aberta com **RightShift**.
+  * Toggle de Aimbot com **Q**.
+  * Sliders para ajuste de Predição e Smooth Speed.
+  * Interface clean e arrastável, com botões e indicadores de estado.
+
+---
+
+## 🎮 Como usar
+
+1. Abra seu executor de scripts no Roblox.
+2. Cole o comando de instalação rápida.
+3. Use as teclas de atalho:
+
+   * `RightShift` → Abre/fecha o menu.
+   * `Q` → Liga/desliga o Aimbot.
+4. Configure o aimbot ao seu gosto na interface.
+
+---
+
+## ⚙️ Configurações disponíveis
+
+* **Prediction** → Ajusta a predição de movimento.
+* **Smooth Speed** → Define a suavidade do movimento da mira.
+* **Team Check** → Ignora aliados automaticamente.
+* **Manual Team Check** → Selecione manualmente quem será ignorado.
+* **Aim Part** → Define a parte do corpo a ser mirado (padrão: Head).
 
 ---
 
 ## 🧩 Solução de problemas
-<details>
-<summary><strong>O comando não executa</strong></summary>
 
-- Verifique sua conexão com a internet.
-- Confirme se o executor suporta `HttpGet` e `loadstring`.
-- Tente novamente mais tarde — pode ter ocorrido instabilidade temporária no GitHub.
+<details>
+<summary><strong>O script não abre a interface</strong></summary>
+
+* Confirme se pressionou **RightShift**.
+* Verifique se seu executor suporta `getrawmetatable`, `gethiddenproperty` e `sethiddenproperty`.
+
 </details>
 
 <details>
-<summary><strong>Meu executor bloqueia requisições HTTP</strong></summary>
+<summary><strong>Não está mirando corretamente</strong></summary>
 
-- Habilite as permissões de HTTP no executor (se aplicável).
-- Atualize para a versão mais recente do executor.
+* Aumente a **Prediction** se o alvo estiver se movendo rápido.
+* Reduza a **Smooth Speed** se a mira parecer lenta.
+
 </details>
-
----
-
-## 🤝 Contribuindo
-Sinta-se à vontade para abrir **Issues** ou enviar **Pull Requests** com melhorias e correções.
 
 ---
 
 ## 🔐 Aviso
-Este projeto é fornecido **“como está”**, sem garantias. Use por sua conta e risco e respeite os termos dos jogos/plataformas envolvidos.
+
+Este projeto é fornecido **“como está”**, sem garantias. Use por sua conta e risco e respeite os termos das plataformas/jogos.
 
 ---
 
 <p align="center">
-  Feito com ❤️ — <a href="https://github.com/Th1iago3">Th1iago3</a>
+  Feito com ❤️ por <a href="https://github.com/Th1iago3">Th1iago3</a>
 </p>
