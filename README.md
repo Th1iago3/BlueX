@@ -66,7 +66,7 @@ Cole no seu executor/script runner e pronto.
 </p>
 
 <p align="center">
-  <img src="https://cdn.discordapp.com/attachments/1406725842498879501/1408336736508968981/bluex_demo.gif?ex=68a95f4b&is=68a80dcb&hm=342ecc4370f449cb0c339cbdd360bcf1131bc3b8fd3abf2a620086c572aaf479&" alt="BlueX GUI In-Game Demo" width="600"/>
+  <img src="[https://cdn.discordapp.com/attachments/1406725842498879501/1408336736508968981/bluex_demo.gif?ex=68a95f4b&is=68a80dcb&hm=342ecc4370f449cb0c339cbdd360bcf1131bc3b8fd3abf2a620086c572aaf479&](https://cdn.discordapp.com/attachments/1406725842498879501/1408336736508968981/bluex_demo.gif?ex=68a95f4b&is=68a80dcb&hm=342ecc4370f449cb0c339cbdd360bcf1131bc3b8fd3abf2a620086c572aaf479&)" alt="BlueX GUI In-Game Demo" width="600"/>
 </p>
 
 ---
