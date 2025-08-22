@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <em>Um script avançado de aimbot e antirecoil para Roblox, com interface gráfica moderna e múltiplas opções de configuração.</em>
+
 </p>
 
 ---
