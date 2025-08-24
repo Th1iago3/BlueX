@@ -96,6 +96,7 @@ Cole no seu executor/script runner e pronto.
 * **Manual Team Check** → Selecione manualmente quem será ignorado.
 * **Aim Part** → Define a parte do corpo a ser mirado (padrão: Head).
 * **ESP Charms** → Ver os Inimigos Atrás das paredes (cor: branca).
+* **Silent AIM** → Redireciona os Projéteis para os inimigos.
 
 ---
 
