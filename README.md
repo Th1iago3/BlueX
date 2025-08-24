@@ -34,6 +34,7 @@ Cole no seu executor/script runner e pronto.
   * Opções de prioridade (distância, vida, ou híbrido).
   * FOV configurável (campo de visão para mirar).
   * ESP Charms (veja seus inimigos através das paredes).
+  * Silent Aim (atirar na cabeça do inimigo sem a necessidade de mirar)
 
 * 👀 **Verificação de visibilidade**
 
@@ -46,10 +47,10 @@ Cole no seu executor/script runner e pronto.
   * **Team Check** (liga/desliga).
   * Seleção manual de “amigos” via GUI.
 
-* 🔫 **No Recoil & No Spread**
+* 🔫 **Assistencia de Mira**
 
-  * Remove recuo, spread e kick das armas.
-  * Aumenta taxa de disparo (fire rate otimizado).
+  * Redireciona os Projeteis para o inimigo (Silent Aim).
+  
 
 * 🖥️ **Interface gráfica (GUI)**
 
@@ -82,6 +83,7 @@ Cole no seu executor/script runner e pronto.
    * `RightShift` → Abre/fecha o menu.
    * `Q` → Liga/desliga o Aimbot.
    * `F6` → Liga/desliga a ESP Charms.
+   * `F8` → Liga/desliga o Silent AIM.
 4. Configure o aimbot ao seu gosto na interface.
 
 ---
