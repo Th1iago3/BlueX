@@ -21,6 +21,8 @@ local isAiming = false
 local velocityHistory = {}
 local accelerationHistory = {}
 local pingHistory = {}
+local aimLerpFactor = 0
+
 RunService.Heartbeat:Connect(function(dt)
     for _, plr in pairs(Players:GetPlayers()) do
         if plr.Character and plr.Character.PrimaryPart then
@@ -154,23 +156,52 @@ local function getClosestVisibleTarget(returnPlayer)
     return returnPlayer and best.plr or best.part
 end
 
-local function aimAtTargetSmooth(targetPart)
+-- Enhanced Dynamic Aimbot
+local function aimAtTargetDynamic(targetPart, dt)
     if not targetPart then return end
     local cam = Camera
     local camPos = cam.CFrame.Position
-    local currentTime = tick()
-    local tremorOffset = Vector3.new(
-        math.sin(currentTime * 8) * 0.08,
-        math.sin(currentTime * 6) * 0.08,
-        math.sin(currentTime * 7) * 0.04
-    )
-    local randomOffset = Vector3.new(math.random(-0.3, 0.3), math.random(-0.3, 0.3), math.random(-0.3, 0.3))
-    local offset = tremorOffset + randomOffset
-    local targetPos = targetPart.Position + offset
-    local targetCFrame = CFrame.new(camPos, targetPos)
-    local t = state.smoothSpeed + math.random(-0.03, 0.03)
-    local blended = cam.CFrame:Lerp(targetCFrame, t)
-    cam.CFrame = blended
+    local camCFrame = cam.CFrame
+
+    -- Calculate predicted position with velocity and acceleration
+    local vel = velocityHistory[lockedTarget] or Vector3.zero
+    local acc = accelerationHistory[lockedTarget] or Vector3.zero
+    local ping = pingHistory[lockedTarget] or 0
+    local time = state.prediction + ping * 10
+    local predictedPos = targetPart.Position + vel * time + 0.5 * acc * time * time
+
+    -- Calculate direction to target
+    local targetDir = (predictedPos - camPos).Unit
+    local targetCFrame = CFrame.new(Vector3.new(0, 0, 0), targetDir)
+
+    -- Get current camera direction
+    local currentDir = camCFrame.LookVector
+    local angleToTarget = math.acos(math.clamp(currentDir:Dot(targetDir), -1, 1))
+
+    -- Dynamic smoothing based on distance and target velocity
+    local dist = (predictedPos - camPos).Magnitude
+    local velMagnitude = vel.Magnitude
+    local dynamicSmooth = math.clamp(state.smoothSpeed * (1 - velMagnitude / 50) * (dist / state.aimDistance), 0.1, 0.9)
+    aimLerpFactor = math.clamp(aimLerpFactor + dt * dynamicSmooth * 5, 0, 1)
+
+    -- Smoothly interpolate yaw and pitch separately for natural movement
+    local currentEuler = camCFrame:ToEulerAnglesYXZ()
+    local targetEuler = targetCFrame:ToEulerAnglesYXZ()
+    local newYaw = currentEuler + (targetEuler - currentEuler) * aimLerpFactor
+    local newPitch = currentEuler + (targetEuler - currentEuler) * aimLerpFactor
+
+    -- Limit pitch to prevent unnatural vertical movement
+    newPitch = math.clamp(newPitch, -math.rad(85), math.rad(85))
+
+    -- Construct new camera CFrame
+    local newCFrame = CFrame.new(camPos) * CFrame.Angles(newPitch, newYaw, 0)
+
+    -- Apply smooth transition
+    if state.smoothAim then
+        cam.CFrame = camCFrame:Lerp(newCFrame, aimLerpFactor)
+    else
+        cam.CFrame = newCFrame
+    end
 end
 
 local function performTeamMapping()
@@ -412,7 +443,6 @@ local function initGui()
         teamDot.BackgroundColor3 = state.teamCheckEnabled and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(80, 80, 80)
     end)
 
-    -- Manual Team Select
     local manualRow = Instance.new("Frame", tabFrame)
     manualRow.Size = UDim2.new(1, 0, 0, 40)
     manualRow.BackgroundTransparency = 1
@@ -544,7 +574,6 @@ local function initGui()
         tabFrame.CanvasSize = UDim2.new(0, 0, 0, tabFrame.UIListLayout.AbsoluteContentSize.Y + 40)
     end)
 
-    -- KeyBinds
     UserInputService.InputBegan:Connect(function(input, processed)
         if processed then return end
         if input.KeyCode == Enum.KeyCode.RightShift then
@@ -566,7 +595,7 @@ end
 performTeamMapping()
 initGui()
 
--- Loop
+-- Main Loop with Enhanced ESP
 RunService.RenderStepped:Connect(function(dt)
     if not did_map then
         performTeamMapping()
@@ -575,22 +604,21 @@ RunService.RenderStepped:Connect(function(dt)
     isAiming = state.aimEnabled
     if state.aimEnabled then
         local targetPart = getClosestVisibleTarget()
-        if targetPart and state.smoothAim and lockedTarget then
-            local vel = velocityHistory[lockedTarget] or Vector3.zero
-            local acc = accelerationHistory[lockedTarget] or Vector3.zero
-            local ping = pingHistory[lockedTarget] or 0
-            local time = state.prediction + ping * 10
-            local predictedPos = targetPart.Position + vel * time + 0.5 * acc * time * time
-            pcall(aimAtTargetSmooth, targetPart)
+        if targetPart and lockedTarget then
+            pcall(aimAtTargetDynamic, targetPart, dt)
+        else
+            aimLerpFactor = 0 -- Reset lerp when no target
         end
+    else
+        aimLerpFactor = 0 -- Reset lerp when aimbot disabled
     end
     local char = LocalPlayer.Character
     local root = char and char:FindFirstChild("HumanoidRootPart")
     local hum = char and char:FindFirstChildOfClass("Humanoid")
     if root and hum then
-        
+        -- Placeholder for additional character logic if needed
     end
-    -- ESP Update
+    -- Enhanced ESP with Box Drawing
     if state.espEnabled then
         local myHrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
         if not myHrp then return end
@@ -598,25 +626,38 @@ RunService.RenderStepped:Connect(function(dt)
             if isEnemy(plr) and plr.Character and plr.Character:FindFirstChild("Head") and plr.Character:FindFirstChild("HumanoidRootPart") then
                 local head = plr.Character.Head
                 local rootPart = plr.Character.HumanoidRootPart
+                local hum = plr.Character:FindFirstChildOfClass("Humanoid")
                 local dist = (rootPart.Position - myHrp.Position).Magnitude
-                if dist > state.aimDistance then continue end
+                if dist > state.aimDistance then
+                    if espDrawings[plr] then
+                        espDrawings[plr].line.Visible = false
+                        espDrawings[plr].text.Visible = false
+                        espDrawings[plr].box.Visible = false
+                    end
+                    continue
+                end
                 local screenPos, onScreen = Camera:WorldToViewportPoint(head.Position)
                 if onScreen then
                     if not espDrawings[plr] then
                         espDrawings[plr] = {
                             line = Drawing.new("Line"),
                             text = Drawing.new("Text"),
+                            box = Drawing.new("Square"),
                         }
                         local d = espDrawings[plr]
-                        d.line.Color = Color3.fromRGB(0, 255, 0)
+                        d.line.Color = Color3.fromRGB(255, 0, 0)
                         d.line.Thickness = 2
-                        d.line.Transparency = 1
+                        d.line.Transparency = 0.9
                         d.text.Color = Color3.fromRGB(255, 255, 255)
                         d.text.Size = 16
-                        d.text.Transparency = 1
+                        d.text.Transparency = 0.9
                         d.text.Center = true
                         d.text.Outline = true
-                        d.text.Font = 2
+                        d.text.Font = Drawing.Fonts.Plex
+                        d.box.Thickness = 2
+                        d.box.Color = Color3.fromRGB(255, 0, 0)
+                        d.box.Transparency = 0.9
+                        d.box.Filled = false
                     end
                     local d = espDrawings[plr]
                     local bottomY = Camera.ViewportSize.Y
@@ -624,19 +665,28 @@ RunService.RenderStepped:Connect(function(dt)
                     d.line.To = Vector2.new(screenPos.X, screenPos.Y)
                     d.line.Visible = true
                     local distStr = math.floor(dist)
-                    d.text.Text = plr.Name .. " [" .. distStr .. "]"
-                    d.text.Position = Vector2.new(screenPos.X, screenPos.Y - 30)
+                    local healthStr = hum and math.floor(hum.Health) or "N/A"
+                    d.text.Text = plr.Name .. " [" .. distStr .. "m | " .. healthStr .. "HP]"
+                    d.text.Position = Vector2.new(screenPos.X, screenPos.Y - 40)
                     d.text.Visible = true
+                    -- ESP Box Drawing
+                    local boxPos = Camera:WorldToViewportPoint(rootPart.Position)
+                    local boxSize = Vector2.new(30, 60) * math.clamp(1000 / dist, 0.5, 2) -- Clamp scaling for better visibility
+                    d.box.Size = boxSize
+                    d.box.Position = Vector2.new(boxPos.X - boxSize.X / 2, boxPos.Y - boxSize.Y / 2)
+                    d.box.Visible = onScreen -- Show box if head is on-screen
                 else
                     if espDrawings[plr] then
                         espDrawings[plr].line.Visible = false
                         espDrawings[plr].text.Visible = false
+                        espDrawings[plr].box.Visible = false
                     end
                 end
             else
                 if espDrawings[plr] then
                     espDrawings[plr].line.Visible = false
                     espDrawings[plr].text.Visible = false
+                    espDrawings[plr].box.Visible = false
                 end
             end
         end
@@ -644,6 +694,7 @@ RunService.RenderStepped:Connect(function(dt)
         for plr, d in pairs(espDrawings) do
             if d.line then d.line:Remove() end
             if d.text then d.text:Remove() end
+            if d.box then d.box:Remove() end
         end
         espDrawings = {}
     end
@@ -655,15 +706,14 @@ local success, utility = pcall(function()
 end)
 
 if success then
-    local aimbotEnabled = false  -- Tied to state.aimEnabled
+    local aimbotEnabled = false
 
-    -- Função para obter entidades/jogadores válidos (adaptado para detectar inimigos)
     local function get_players()
         local entities = {}
         for _, child in pairs(workspace:GetChildren()) do
             if child:FindFirstChildOfClass("Humanoid") and child ~= LocalPlayer.Character then
                 table.insert(entities, child)
-            elseif child.Name == "HurtEffect" then  -- Para efeitos de dano em alguns jogos
+            elseif child.Name == "HurtEffect" then
                 for _, hurt_player in pairs(child:GetChildren()) do
                     if hurt_player.ClassName ~= "Highlight" then
                         table.insert(entities, hurt_player.Parent or hurt_player)
@@ -674,20 +724,19 @@ if success then
         return entities
     end
 
-    -- Função para encontrar o jogador/inimigo mais próximo na tela, visível e inimigo
     local function get_closest_player()
         local closest, closest_distance = nil, math.huge
         local character = LocalPlayer.Character
         if not character then return nil end
 
         for _, player_char in pairs(get_players()) do
-            if player_char == LocalPlayer.Character then continue end  -- Exclui o próprio personagem
+            if player_char == LocalPlayer.Character then continue end
             local plr = Players:GetPlayerFromCharacter(player_char)
-            if plr and not isEnemy(plr) then continue end  -- Apenas inimigos usando a função isEnemy
+            if plr and not isEnemy(plr) then continue end
             if not player_char:FindFirstChild("HumanoidRootPart") or not player_char:FindFirstChild("Head") then continue end
 
             local head = player_char:FindFirstChild("Head")
-            if not isPartVisible(head) then continue end  -- Apenas visíveis
+            if not isPartVisible(head) then continue end
 
             local position, on_screen = Camera:WorldToViewportPoint(player_char.HumanoidRootPart.Position)
             if not on_screen then continue end
@@ -703,24 +752,21 @@ if success then
         return closest
     end
 
-    -- Hook no Raycast do Utility (direciona para o head do inimigo se o argumento 4 for 999 - flag comum para aim)
     local old_raycast = utility.Raycast
     utility.Raycast = function(...)
         local arguments = {...}
-        aimbotEnabled = state.aimEnabled  -- Sync with main aim toggle
-        if aimbotEnabled and #arguments > 0 and (arguments[4] == 999 or arguments[4] == true) then  -- Flag para aim/ataque; ajuste se necessário
+        aimbotEnabled = state.aimEnabled
+        if aimbotEnabled and #arguments > 0 and (arguments[4] == 999 or arguments[4] == true) then
             local closest = get_closest_player()
             if closest and closest:FindFirstChild("Head") then
-                -- Direciona o raycast (argumento 3 é geralmente a direção/origem para o alvo)
-                arguments[3] = closest.Head.Position  -- Muda a direção para o head do inimigo
+                local vel = velocityHistory[Players:GetPlayerFromCharacter(closest)] or Vector3.zero
+                local acc = accelerationHistory[Players:GetPlayerFromCharacter(closest)] or Vector3.zero
+                local ping = pingHistory[Players:GetPlayerFromCharacter(closest)] or 0
+                local time = state.prediction + ping * 10
+                local predictedPos = closest.Head.Position + vel * time + 0.5 * acc * time * time
+                arguments[3] = predictedPos
             end
         end
         return old_raycast(table.unpack(arguments))
     end
-
-    -- Loop para manter o hook ativo (opcional, para atualizações)
-    RunService.Heartbeat:Connect(function()
-        if not aimbotEnabled then return end
-        -- Aqui você pode adicionar lógica extra, como auto-ataque se detectar inimigo
-    end)
 end
