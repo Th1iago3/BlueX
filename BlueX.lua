@@ -21,7 +21,6 @@ local isAiming = false
 local velocityHistory = {}
 local accelerationHistory = {}
 local pingHistory = {}
-local aimLerpFactor = 0
 
 RunService.Heartbeat:Connect(function(dt)
     for _, plr in pairs(Players:GetPlayers()) do
@@ -38,11 +37,11 @@ local state = {
     aimEnabled = false,
     visibleCheck = true,
     teamCheckEnabled = false,
-    fovDegrees = 7,
+    fovDegrees = 10, -- Increased for better target acquisition
     aimDistance = 500,
     smoothAim = true,
-    smoothSpeed = 0.65,
-    prediction = 0.47,
+    smoothSpeed = 0.2, -- Adjusted for smoother aim
+    prediction = 0.1, -- Fine-tuned for better prediction
     aimPart = "Head",
     aimPriority = "Distance",
     espEnabled = false,
@@ -156,52 +155,27 @@ local function getClosestVisibleTarget(returnPlayer)
     return returnPlayer and best.plr or best.part
 end
 
--- Enhanced Dynamic Aimbot
-local function aimAtTargetDynamic(targetPart, dt)
+local function aimAtTargetSmooth(targetPart, dt)
     if not targetPart then return end
     local cam = Camera
     local camPos = cam.CFrame.Position
-    local camCFrame = cam.CFrame
-
-    -- Calculate predicted position with velocity and acceleration
     local vel = velocityHistory[lockedTarget] or Vector3.zero
     local acc = accelerationHistory[lockedTarget] or Vector3.zero
     local ping = pingHistory[lockedTarget] or 0
-    local time = state.prediction + ping * 10
+    local time = state.prediction + ping
     local predictedPos = targetPart.Position + vel * time + 0.5 * acc * time * time
 
-    -- Calculate direction to target
-    local targetDir = (predictedPos - camPos).Unit
-    local targetCFrame = CFrame.new(Vector3.new(0, 0, 0), targetDir)
+    -- Convert target position to screen coordinates to check if within FOV
+    local screenPos, onScreen = Camera:WorldToViewportPoint(predictedPos)
+    if not onScreen then return end
 
-    -- Get current camera direction
-    local currentDir = camCFrame.LookVector
-    local angleToTarget = math.acos(math.clamp(currentDir:Dot(targetDir), -1, 1))
-
-    -- Dynamic smoothing based on distance and target velocity
-    local dist = (predictedPos - camPos).Magnitude
-    local velMagnitude = vel.Magnitude
-    local dynamicSmooth = math.clamp(state.smoothSpeed * (1 - velMagnitude / 50) * (dist / state.aimDistance), 0.1, 0.9)
-    aimLerpFactor = math.clamp(aimLerpFactor + dt * dynamicSmooth * 5, 0, 1)
-
-    -- Smoothly interpolate yaw and pitch separately for natural movement
-    local currentEuler = camCFrame:ToEulerAnglesYXZ()
-    local targetEuler = targetCFrame:ToEulerAnglesYXZ()
-    local newYaw = currentEuler + (targetEuler - currentEuler) * aimLerpFactor
-    local newPitch = currentEuler + (targetEuler - currentEuler) * aimLerpFactor
-
-    -- Limit pitch to prevent unnatural vertical movement
-    newPitch = math.clamp(newPitch, -math.rad(85), math.rad(85))
-
-    -- Construct new camera CFrame
-    local newCFrame = CFrame.new(camPos) * CFrame.Angles(newPitch, newYaw, 0)
-
-    -- Apply smooth transition
-    if state.smoothAim then
-        cam.CFrame = camCFrame:Lerp(newCFrame, aimLerpFactor)
-    else
-        cam.CFrame = newCFrame
-    end
+    -- Smooth camera movement using spherical linear interpolation (slerp)
+    local targetCFrame = CFrame.new(camPos, predictedPos)
+    local currentCFrame = cam.CFrame
+    local deltaAngle = math.acos(currentCFrame.LookVector:Dot(targetCFrame.LookVector))
+    local t = math.clamp(state.smoothSpeed * dt * 60, 0, 1)
+    local smoothedCFrame = currentCFrame:Lerp(targetCFrame, t)
+    cam.CFrame = smoothedCFrame
 end
 
 local function performTeamMapping()
@@ -412,6 +386,7 @@ local function initGui()
 
     makeSlider(tabFrame, "Prediction", 0, 1, state.prediction, function(v) state.prediction = v end, 0.01, 1, "%.2f")
     makeSlider(tabFrame, "Smooth Speed", 0, 1, state.smoothSpeed, function(v) state.smoothSpeed = v end, 0.01, 1, "%.2f")
+    makeSlider(tabFrame, "FOV", 5, 90, state.fovDegrees, function(v) state.fovDegrees = v end, 1, 1, "%.0f")
 
     local teamRow = Instance.new("Frame", tabFrame)
     teamRow.Size = UDim2.new(1, 0, 0, 40)
@@ -581,8 +556,26 @@ local function initGui()
         elseif input.KeyCode == Enum.KeyCode.Q then
             state.aimEnabled = not state.aimEnabled
             dotFrame.BackgroundColor3 = state.aimEnabled and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(80, 80, 80)
+            if state.aimEnabled then
+                StarterGui:SetCore("SendNotification", {
+                    Title = "Aimbot",
+                    Text = "Aimbot Enabled",
+                    Duration = 2
+                })
+            else
+                StarterGui:SetCore("SendNotification", {
+                    Title = "Aimbot",
+                    Text = "Aimbot Disabled",
+                    Duration = 2
+                })
+            end
         elseif input.KeyCode == Enum.KeyCode.F6 then
             state.espEnabled = not state.espEnabled
+            StarterGui:SetCore("SendNotification", {
+                Title = "ESP",
+                Text = state.espEnabled and "ESP Enabled" or "ESP Disabled",
+                Duration = 2
+            })
         end
     end)
     screenGui.Enabled = true
@@ -595,7 +588,119 @@ end
 performTeamMapping()
 initGui()
 
--- Main Loop with Enhanced ESP
+-- ESP Functions
+local function createESP(player)
+    local drawings = {
+        box = Drawing.new("Square"),
+        line = Drawing.new("Line"),
+        name = Drawing.new("Text"),
+        health = Drawing.new("Text"),
+        distance = Drawing.new("Text")
+    }
+    drawings.box.Thickness = 2
+    drawings.box.Transparency = 1
+    drawings.box.Color = Color3.fromRGB(255, 0, 0)
+    drawings.box.Filled = false
+    drawings.line.Thickness = 2
+    drawings.line.Color = Color3.fromRGB(0, 255, 0)
+    drawings.line.Transparency = 1
+    drawings.name.Size = 16
+    drawings.name.Color = Color3.fromRGB(255, 255, 255)
+    drawings.name.Outline = true
+    drawings.name.Center = true
+    drawings.name.Font = 2
+    drawings.health.Size = 14
+    drawings.health.Color = Color3.fromRGB(0, 255, 0)
+    drawings.health.Outline = true
+    drawings.health.Center = true
+    drawings.health.Font = 2
+    drawings.distance.Size = 14
+    drawings.distance.Color = Color3.fromRGB(255, 255, 255)
+    drawings.distance.Outline = true
+    drawings.distance.Center = true
+    drawings.distance.Font = 2
+    return drawings
+end
+
+local function updateESP()
+    local myHrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not myHrp then
+        for _, drawings in pairs(espDrawings) do
+            drawings.box.Visible = false
+            drawings.line.Visible = false
+            drawings.name.Visible = false
+            drawings.health.Visible = false
+            drawings.distance.Visible = false
+        end
+        return
+    end
+
+    for _, plr in pairs(Players:GetPlayers()) do
+        if isEnemy(plr) and plr.Character and plr.Character:FindFirstChild("Head") and plr.Character:FindFirstChild("HumanoidRootPart") and plr.Character:FindFirstChildOfClass("Humanoid") then
+            local head = plr.Character.Head
+            local rootPart = plr.Character.HumanoidRootPart
+            local humanoid = plr.Character:FindFirstChildOfClass("Humanoid")
+            local dist = (rootPart.Position - myHrp.Position).Magnitude
+            if dist > state.aimDistance then
+                if espDrawings[plr] then
+                    espDrawings[plr].box.Visible = false
+                    espDrawings[plr].line.Visible = false
+                    espDrawings[plr].name.Visible = false
+                    espDrawings[plr].health.Visible = false
+                    espDrawings[plr].distance.Visible = false
+                end
+                continue
+            end
+            local headPos, onScreen = Camera:WorldToViewportPoint(head.Position)
+            local rootPos = Camera:WorldToViewportPoint(rootPart.Position)
+            local topPos = Camera:WorldToViewportPoint(head.Position + Vector3.new(0, 3, 0))
+            local bottomPos = Camera:WorldToViewportPoint(rootPart.Position - Vector3.new(0, 3, 0))
+            if onScreen then
+                if not espDrawings[plr] then
+                    espDrawings[plr] = createESP(plr)
+                end
+                local drawings = espDrawings[plr]
+                local boxHeight = math.abs(topPos.Y - bottomPos.Y)
+                local boxWidth = boxHeight * 0.6
+                drawings.box.Size = Vector2.new(boxWidth, boxHeight)
+                drawings.box.Position = Vector2.new(headPos.X - boxWidth / 2, topPos.Y)
+                drawings.box.Visible = true
+                drawings.line.From = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y)
+                drawings.line.To = Vector2.new(headPos.X, headPos.Y)
+                drawings.line.Visible = true
+                drawings.name.Text = plr.Name
+                drawings.name.Position = Vector2.new(headPos.X, topPos.Y - 30)
+                drawings.name.Visible = true
+                local healthPercent = math.floor((humanoid.Health / humanoid.MaxHealth) * 100)
+                drawings.health.Text = "HP: " .. healthPercent .. "%"
+                drawings.health.Position = Vector2.new(headPos.X, topPos.Y - 50)
+                drawings.health.Color = Color3.fromRGB(255 * (1 - healthPercent / 100), 255 * (healthPercent / 100), 0)
+                drawings.health.Visible = true
+                drawings.distance.Text = math.floor(dist) .. "m"
+                drawings.distance.Position = Vector2.new(headPos.X, bottomPos.Y + 15)
+                drawings.distance.Visible = true
+            else
+                if espDrawings[plr] then
+                    espDrawings[plr].box.Visible = false
+                    espDrawings[plr].line.Visible = false
+                    espDrawings[plr].name.Visible = false
+                    espDrawings[plr].health.Visible = false
+                    espDrawings[plr].distance.Visible = false
+                end
+            end
+        else
+            if espDrawings[plr] then
+                espDrawings[plr].box.Visible = false
+                espDrawings[plr].line.Visible = false
+                espDrawings[plr].name.Visible = false
+                espDrawings[plr].health.Visible = false
+                espDrawings[plr].distance.Visible = false
+            end
+        end
+    end
+end
+
+-- Main Loop
 RunService.RenderStepped:Connect(function(dt)
     if not did_map then
         performTeamMapping()
@@ -604,97 +709,19 @@ RunService.RenderStepped:Connect(function(dt)
     isAiming = state.aimEnabled
     if state.aimEnabled then
         local targetPart = getClosestVisibleTarget()
-        if targetPart and lockedTarget then
-            pcall(aimAtTargetDynamic, targetPart, dt)
-        else
-            aimLerpFactor = 0 -- Reset lerp when no target
+        if targetPart and state.smoothAim and lockedTarget then
+            pcall(aimAtTargetSmooth, targetPart, dt)
         end
-    else
-        aimLerpFactor = 0 -- Reset lerp when aimbot disabled
     end
-    local char = LocalPlayer.Character
-    local root = char and char:FindFirstChild("HumanoidRootPart")
-    local hum = char and char:FindFirstChildOfClass("Humanoid")
-    if root and hum then
-        -- Placeholder for additional character logic if needed
-    end
-    -- Enhanced ESP with Box Drawing
     if state.espEnabled then
-        local myHrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-        if not myHrp then return end
-        for _, plr in pairs(Players:GetPlayers()) do
-            if isEnemy(plr) and plr.Character and plr.Character:FindFirstChild("Head") and plr.Character:FindFirstChild("HumanoidRootPart") then
-                local head = plr.Character.Head
-                local rootPart = plr.Character.HumanoidRootPart
-                local hum = plr.Character:FindFirstChildOfClass("Humanoid")
-                local dist = (rootPart.Position - myHrp.Position).Magnitude
-                if dist > state.aimDistance then
-                    if espDrawings[plr] then
-                        espDrawings[plr].line.Visible = false
-                        espDrawings[plr].text.Visible = false
-                        espDrawings[plr].box.Visible = false
-                    end
-                    continue
-                end
-                local screenPos, onScreen = Camera:WorldToViewportPoint(head.Position)
-                if onScreen then
-                    if not espDrawings[plr] then
-                        espDrawings[plr] = {
-                            line = Drawing.new("Line"),
-                            text = Drawing.new("Text"),
-                            box = Drawing.new("Square"),
-                        }
-                        local d = espDrawings[plr]
-                        d.line.Color = Color3.fromRGB(255, 0, 0)
-                        d.line.Thickness = 2
-                        d.line.Transparency = 0.9
-                        d.text.Color = Color3.fromRGB(255, 255, 255)
-                        d.text.Size = 16
-                        d.text.Transparency = 0.9
-                        d.text.Center = true
-                        d.text.Outline = true
-                        d.text.Font = Drawing.Fonts.Plex
-                        d.box.Thickness = 2
-                        d.box.Color = Color3.fromRGB(255, 0, 0)
-                        d.box.Transparency = 0.9
-                        d.box.Filled = false
-                    end
-                    local d = espDrawings[plr]
-                    local bottomY = Camera.ViewportSize.Y
-                    d.line.From = Vector2.new(screenPos.X, bottomY)
-                    d.line.To = Vector2.new(screenPos.X, screenPos.Y)
-                    d.line.Visible = true
-                    local distStr = math.floor(dist)
-                    local healthStr = hum and math.floor(hum.Health) or "N/A"
-                    d.text.Text = plr.Name .. " [" .. distStr .. "m | " .. healthStr .. "HP]"
-                    d.text.Position = Vector2.new(screenPos.X, screenPos.Y - 40)
-                    d.text.Visible = true
-                    -- ESP Box Drawing
-                    local boxPos = Camera:WorldToViewportPoint(rootPart.Position)
-                    local boxSize = Vector2.new(30, 60) * math.clamp(1000 / dist, 0.5, 2) -- Clamp scaling for better visibility
-                    d.box.Size = boxSize
-                    d.box.Position = Vector2.new(boxPos.X - boxSize.X / 2, boxPos.Y - boxSize.Y / 2)
-                    d.box.Visible = onScreen -- Show box if head is on-screen
-                else
-                    if espDrawings[plr] then
-                        espDrawings[plr].line.Visible = false
-                        espDrawings[plr].text.Visible = false
-                        espDrawings[plr].box.Visible = false
-                    end
-                end
-            else
-                if espDrawings[plr] then
-                    espDrawings[plr].line.Visible = false
-                    espDrawings[plr].text.Visible = false
-                    espDrawings[plr].box.Visible = false
-                end
-            end
-        end
+        updateESP()
     else
-        for plr, d in pairs(espDrawings) do
-            if d.line then d.line:Remove() end
-            if d.text then d.text:Remove() end
-            if d.box then d.box:Remove() end
+        for _, drawings in pairs(espDrawings) do
+            drawings.box:Remove()
+            drawings.line:Remove()
+            drawings.name:Remove()
+            drawings.health:Remove()
+            drawings.distance:Remove()
         end
         espDrawings = {}
     end
@@ -759,10 +786,11 @@ if success then
         if aimbotEnabled and #arguments > 0 and (arguments[4] == 999 or arguments[4] == true) then
             local closest = get_closest_player()
             if closest and closest:FindFirstChild("Head") then
-                local vel = velocityHistory[Players:GetPlayerFromCharacter(closest)] or Vector3.zero
-                local acc = accelerationHistory[Players:GetPlayerFromCharacter(closest)] or Vector3.zero
-                local ping = pingHistory[Players:GetPlayerFromCharacter(closest)] or 0
-                local time = state.prediction + ping * 10
+                local plr = Players:GetPlayerFromCharacter(closest)
+                local vel = velocityHistory[plr] or Vector3.zero
+                local acc = accelerationHistory[plr] or Vector3.zero
+                local ping = pingHistory[plr] or 0
+                local time = state.prediction + ping
                 local predictedPos = closest.Head.Position + vel * time + 0.5 * acc * time * time
                 arguments[3] = predictedPos
             end
