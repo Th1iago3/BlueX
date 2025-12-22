@@ -1,5 +1,4 @@
--- BlueX Ultimate - Advanced Aimbot & ESP System
--- Real-time memory manipulation with advanced bypass & anti-detection
+-- Prevent Double Injection
 if game:GetService("CoreGui"):FindFirstChild("UltimateSuiteGui") then
     return
 end
@@ -12,7 +11,7 @@ local Workspace = game:GetService("Workspace")
 local Camera = Workspace.CurrentCamera
 local LocalPlayer = Players.LocalPlayer
 local PathfindingService = game:GetService("PathfindingService")
--- Advanced Virtual Memory Overlay System (2000+ Line Bypass)
+-- Memory Overlay Injection
 local VirtualMemory = {
     MemoryLayer = {},
     InstanceCache = {},
