@@ -21,6 +21,12 @@ Copie o código abaixo:
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Th1iago3/BlueX/refs/heads/main/BlueX.lua"))()
 ````
 
+## 🖥️ Alpha-Version (BloxStrike)
+
+```lua
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Th1iago3/BlueX/refs/heads/main/BlueX_Alpha.lua"))()
+````
+
 Cole no seu executor/script runner e pronto.
 
 ---
